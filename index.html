@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="it" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Da IA a Web App in Classe: Guida Pratica per Docenti</title>
+  <!-- Tailwind CSS per uno stile moderno e reattivo -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef8ff',
+              100: '#d8efff',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              800: '#0c4a6e',
+            },
+            accent: {
+              emerald: '#10b981',
+              amber: '#f59e0b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Stili personalizzati per la stampa della guida cartacea */
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-border { border: 1px solid #cbd5e1 !important; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-brand-100 selection:text-brand-800">
+
+  <!-- BARRA DI NAVIGAZIONE SUPERIORE -->
+  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="p-2 bg-brand-50 text-brand-600 rounded-xl border border-brand-100 shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+        </span>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Da IA a Web App</h1>
+          <p class="text-xs text-slate-500 hidden sm:block">Guida rapida a GitHub Pages per docenti</p>
+        </div>
+      </div>
+      <nav class="flex items-center space-x-2 text-sm font-medium">
+        <a href="#prompt" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition">Il Prompt</a>
+        <a href="#passaggi" class="px-3 py-1.5 rounded-lg text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition">I 4 Passi</a>
+        <a href="#proiettore-lim" class="px-3 py-1.5 rounded-lg bg-brand-50 text-brand-700 hover:bg-brand-100 transition font-semibold">Generatore LIM</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- SEZIONE INTRODUTTIVA -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+    
+    <section class="text-center space-y-4 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold tracking-wide uppercase">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Zero installazioni sul PC • 100% gratuito
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        Pubblica i tuoi quiz, giochi e simulazioni con un clic per tutta la classe
+      </h2>
+      <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+        Hai chiesto a ChatGPT, Gemini o Claude di creare una risorsa per la tua lezione? Ecco come trasformarla in un sito web sicuro con indirizzo dedicato da proiettare sulla LIM o condividere su Classroom.
+      </p>
+
+      <!-- BARRA PROGRESSI INTERATTIVA -->
+      <div class="mt-8 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm max-w-xl mx-auto text-left">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Avanzamento attività</span>
+          <span id="progressText" class="text-xs font-semibold text-brand-600">0 di 4 completati (0%)</span>
+        </div>
+        <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+          <div id="progressBar" class="bg-brand-500 h-2.5 rounded-full w-0 transition-all duration-300 ease-out"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRUCCO D'ORO: IL PROMPT MAGICO -->
+    <section id="prompt" class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-sm relative overflow-hidden">
+      <div class="absolute -right-8 -top-8 w-32 h-32 bg-amber-200/50 rounded-full blur-2xl pointer-events-none"></div>
+      
+      <div class="flex flex-col sm:flex-row items-start gap-4">
+        <div class="p-3 bg-amber-500 text-white rounded-2xl shrink-0 shadow-sm">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div class="space-y-3 flex-1">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-xl font-bold text-amber-950">Il "Trucco d'Oro" prima di iniziare</h3>
+            <span class="text-xs font-semibold text-amber-800 bg-amber-200/70 px-2.5 py-1 rounded-full">Evita il 90% degli errori</span>
+          </div>
+          <p class="text-sm text-amber-900 leading-relaxed">
+            I server web solitamente collegano file separati per testi, grafica e logica. Per rendere tutto semplicissimo e incollare un blocco unico, aggiungi sempre questa formula magica in fondo alla tua richiesta all'IA:
+          </p>
+          
+          <div class="bg-white/80 border border-amber-200 rounded-xl p-4 relative group">
+            <p id="promptText" class="font-mono text-sm text-slate-800 pr-24 select-all">
+              «Forniscimi tutto in un UNICO file HTML completo, che contenga al suo interno anche il codice CSS (stile) e JavaScript (funzioni). Non dividere il lavoro in più file separati.»
+            </p>
+            <button onclick="copyToClipboard('promptText', 'promptFeedback')" class="absolute top-3 right-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-medium rounded-lg shadow-sm transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+              </svg>
+              <span id="promptFeedback">Copia</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- I 4 PASSAGGI GUIDATI -->
+    <section id="passaggi" class="space-y-8">
+      <div class="border-b border-slate-200 pb-4">
+        <h3 class="text-2xl font-bold text-slate-900">La procedura in 4 fasi</h3>
+        <p class="text-sm text-slate-500">Puoi spuntare ogni fase completata per non perdere il filo.</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6">
+
+        <!-- FASE 1 -->
+        <article class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-sm transition hover:shadow-md">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-500 text-white font-bold text-sm">1</span>
+              <h4 class="text-lg font-bold text-slate-900">Crea lo spazio di lavoro (Repository)</h4>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" data-step="1" onchange="toggleStep(1)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-500">Fatto</span>
+            </label>
+          </div>
+
+          <p class="mt-3 text-slate-600 text-sm">Questa operazione si compie una sola volta per ogni app:</p>
+
+          <ol class="mt-4 space-y-3 text-sm text-slate-700">
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Accedi su <a href="https://github.com" target="_blank" class="text-brand-600 underline font-medium hover:text-brand-700">github.com</a> (la registrazione è gratuita).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Clicca sul tasto verde <strong>New</strong> per creare un nuovo contenitore (repository).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <div>
+                <strong>Repository name:</strong> assegna un nome breve senza spazi né accenti (es. <code class="bg-slate-100 text-brand-700 px-1.5 py-0.5 rounded text-xs font-mono">quiz-romani</code> o <code class="bg-slate-100 text-brand-700 px-1.5 py-0.5 rounded text-xs font-mono">frazioni-3b</code>).
+              </div>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Verifica che sia spuntato <strong class="text-emerald-700">Public</strong> (necessario per visualizzarlo gratis con gli studenti).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Spunta la casellina <strong>Add a README file</strong> e clicca sul pulsante verde <strong>Create repository</strong>.</span>
+            </li>
+          </ol>
+        </article>
+
+        <!-- FASE 2 -->
+        <article class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-sm transition hover:shadow-md">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-500 text-white font-bold text-sm">2</span>
+              <h4 class="text-lg font-bold text-slate-900">Incolla il codice generato dall'IA</h4>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" data-step="2" onchange="toggleStep(2)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-500">Fatto</span>
+            </label>
+          </div>
+
+          <p class="mt-3 text-slate-600 text-sm">Non devi scaricare file sul computer; puoi incollare il testo direttamente sul sito di GitHub:</p>
+
+          <ol class="mt-4 space-y-3 text-sm text-slate-700">
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>In alto a destra nel repository, clicca su <strong>Add file</strong> &rarr; <strong>Create new file</strong>.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <div>
+                Nel campo <em>Name your file...</em> scrivi tassativamente:
+                <div class="inline-flex items-center gap-2 my-1 px-3 py-1 bg-brand-50 border border-brand-200 rounded-lg text-brand-800 font-mono text-xs font-bold">
+                  index.html
+                </div>
+                <p class="text-xs text-slate-500">Attenzione: tutto in minuscolo. È il nome convenzionale riconosciuto da ogni server web.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Copia il codice completo generato dalla tua IA (<kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-xs font-mono">Ctrl + C</kbd>).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Clicca nell'area bianca sottostante su GitHub e incolla (<kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-xs font-mono">Ctrl + V</kbd>).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Scorri in fondo alla pagina, premi il tasto verde <strong>Commit changes...</strong> e conferma.</span>
+            </li>
+          </ol>
+        </article>
+
+        <!-- FASE 3 -->
+        <article class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-sm transition hover:shadow-md">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-500 text-white font-bold text-sm">3</span>
+              <h4 class="text-lg font-bold text-slate-900">Accendi il sito (GitHub Pages)</h4>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" data-step="3" onchange="toggleStep(3)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-500">Fatto</span>
+            </label>
+          </div>
+
+          <p class="mt-3 text-slate-600 text-sm">Diciamo a GitHub di convertire la pagina in un sito web navigabile da tutti:</p>
+
+          <ol class="mt-4 space-y-3 text-sm text-slate-700">
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Clicca sulla scheda in alto con la rotellina degli ingranaggi: <strong>Settings</strong>.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Nella colonna sinistra, clicca sulla voce <strong>Pages</strong> (icona del foglietto).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <div>
+                Sotto la voce <strong>Branch</strong>, clicca sul menu a tendina che segna <em>None</em> e seleziona <strong>main</strong> (o <em>master</em>). Lascia la cartella affiancata impostata su <code class="bg-slate-100 px-1 rounded text-xs font-mono">/(root)</code>.
+              </div>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Clicca su <strong>Save</strong>.</span>
+            </li>
+          </ol>
+        </article>
+
+        <!-- FASE 4 -->
+        <article class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 shadow-sm transition hover:shadow-md">
+          <div class="flex items-start justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <span class="flex items-center justify-center w-8 h-8 rounded-full bg-brand-500 text-white font-bold text-sm">4</span>
+              <h4 class="text-lg font-bold text-slate-900">Prendi il link e provalo</h4>
+            </div>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" data-step="4" onchange="toggleStep(4)" class="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+              <span class="text-xs font-semibold text-slate-500">Fatto</span>
+            </label>
+          </div>
+
+          <ol class="mt-4 space-y-3 text-sm text-slate-700">
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Attendi circa <strong>60-90 secondi</strong> e ricarica la pagina delle impostazioni (<kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-300 rounded text-xs font-mono">F5</kbd>).</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <div>
+                In cima comparirà un riquadro con il tuo link:
+                <div class="mt-1.5 p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-emerald-800 text-xs font-mono">
+                  Your site is live at: https://tuo-username.github.io/nome-app/
+                </div>
+              </div>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="font-bold text-slate-400">•</span>
+              <span>Clicca su <strong>Visit site</strong>: l'app si aprirà nel browser, pronta per essere condivisa!</span>
+            </li>
+          </ol>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- STRUMENTO INTERATTIVO: CREA IL LINK & QR CODE PER LA LIM -->
+    <section id="proiettore-lim" class="bg-white border-2 border-brand-500/30 rounded-3xl p-6 sm:p-8 shadow-sm">
+      <div class="max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-brand-50 text-brand-700 text-xs font-bold uppercase mb-2">
+          Utility per l'aula
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900">Calcolatore di Link & QR Code per la LIM</h3>
+        <p class="text-sm text-slate-600 mt-1">
+          Inserisci il tuo nome utente GitHub e il nome che hai dato all'app. Otterrai all'istante il link esatto e il codice QR ingrandibile da mostrare agli studenti.
+        </p>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <!-- Form input -->
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tuo Username GitHub</label>
+            <input type="text" id="ghUser" placeholder="es. prof-rossi" oninput="generateAppUrl()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nome del Repository</label>
+            <input type="text" id="ghRepo" placeholder="es. quiz-geografia" oninput="generateAppUrl()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+            <span class="text-xs font-semibold text-slate-500 block">Indirizzo calcolato:</span>
+            <div id="fullUrlDisplay" class="font-mono text-xs font-bold text-brand-700 mt-1 break-all">
+              https://tuo-username.github.io/nome-app/
+            </div>
+          </div>
+
+          <button onclick="copyGeneratedLink()" class="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm rounded-xl transition shadow-sm flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span id="copyLinkFeedback">Copia Link per Classroom</span>
+          </button>
+        </div>
+
+        <!-- Box QR Code -->
+        <div class="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-200 text-center">
+          <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200">
+            <img id="qrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://github.com" alt="QR Code per la classe" class="w-44 h-44 object-contain rounded-lg">
+          </div>
+          <span class="text-xs text-slate-500 mt-3 font-medium">Inquadrabile da tablet e smartphone in aula</span>
+          <button onclick="openQrModal()" class="mt-2 text-xs font-bold text-brand-600 hover:text-brand-800 transition underline">
+            Ingrandisci per proiezione LIM ↗
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RISOLUZIONE ERRORI COMUNI -->
+    <section class="space-y-4">
+      <h3 class="text-2xl font-bold text-slate-900">Risoluzione rapida dei problemi</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center gap-2 text-rose-600 font-bold text-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            Errore 404 (File not found)
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Verifica che il file si chiami esattamente <code class="font-mono text-slate-800 bg-slate-100 px-1 py-0.5 rounded">index.html</code> (tutto minuscolo). Se si chiama <em>Index.html</em> o <em>app.html</em>, rinominalo premendo sulla matita nell'editor di GitHub.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center gap-2 text-rose-600 font-bold text-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            Sullo schermo compare solo testo/codice
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Il file è stato inavvertitamente salvato con estensione <code class="font-mono text-slate-800 bg-slate-100 px-1 py-0.5 rounded">.txt</code> anziché <code class="font-mono text-slate-800 bg-slate-100 px-1 py-0.5 rounded">.html</code>. Modifica il nome del file eliminando <em>.txt</em>.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center gap-2 text-amber-600 font-bold text-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            La pagina web rimane completamente bianca
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            L'IA ha interrotto la scrittura del codice prima della fine. Torna sulla chat e digita: <em>«Riscrivi il codice per intero verificando che non sia troncato e senza tag interrotti»</em>.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+          <div class="flex items-center gap-2 text-amber-600 font-bold text-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            Ho fatto una correzione ma vedo la vecchia versione
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            È solo la memoria cache del tuo browser. Premi <kbd class="font-mono text-xs bg-slate-100 px-1 rounded border">Ctrl + F5</kbd> su Windows o <kbd class="font-mono text-xs bg-slate-100 px-1 rounded border">Cmd + Shift + R</kbd> su Mac per ricaricare la pagina forzatamente.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- FOOTER / PROMEMORIA AGGIORNAMENTI -->
+    <footer class="border-t border-slate-200 pt-8 pb-12 text-center text-xs text-slate-400 space-y-2">
+      <p>Guida a scopo didattico • GitHub Pages è un servizio gratuito fornito da GitHub Inc.</p>
+      <p>Puoi salvare questa pagina come segnalibro per averla sempre a disposizione ad ogni nuova lezione multimediale.</p>
+    </footer>
+
+  </main>
+
+  <!-- MODALE INGRANDIMENTO QR PER PROIEZIONE SULLA LIM -->
+  <div id="qrModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4" onclick="closeQrModal()">
+    <div class="bg-white p-6 sm:p-8 rounded-3xl max-w-sm sm:max-w-md w-full text-center space-y-4 shadow-2xl" onclick="event.stopPropagation()">
+      <h4 class="text-xl font-bold text-slate-900">Inquadra per partecipare</h4>
+      <div class="bg-white p-4 border border-slate-200 rounded-2xl inline-block shadow-sm">
+        <img id="qrModalImage" src="" alt="QR Code LIM" class="w-64 h-64 sm:w-72 sm:h-72 object-contain mx-auto">
+      </div>
+      <p id="modalUrlDisplay" class="font-mono text-xs text-slate-600 break-all px-2"></p>
+      <button onclick="closeQrModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition">
+        Chiudi schermata
+      </button>
+    </div>
+  </div>
+
+  <!-- SCRIPT LOGICO DELLA GUIDA -->
+  <script>
+    // Gestione della memoria del progresso passaggi (LocalStorage)
+    const totalSteps = 4;
+    function updateProgress() {
+      let completed = 0;
+      for (let i = 1; i <= totalSteps; i++) {
+        if (localStorage.getItem('docente_step_' + i) === 'true') {
+          completed++;
+          const cb = document.querySelector(`input[data-step="${i}"]`);
+          if (cb) cb.checked = true;
+        }
+      }
+      const pct = Math.round((completed / totalSteps) * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressText').innerText = `${completed} di ${totalSteps} completati (${pct}%)`;
+    }
+
+    function toggleStep(stepNum) {
+      const cb = document.querySelector(`input[data-step="${stepNum}"]`);
+      localStorage.setItem('docente_step_' + stepNum, cb.checked ? 'true' : 'false');
+      updateProgress();
+    }
+
+    // Copia prompt con feedback visivo
+    function copyToClipboard(elementId, feedbackId) {
+      const text = document.getElementById(elementId).innerText.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        const feedback = document.getElementById(feedbackId);
+        const originalText = feedback.innerText;
+        feedback.innerText = "Copiato!";
+        setTimeout(() => {
+          feedback.innerText = originalText;
+        }, 2000);
+      });
+    }
+
+    // Costruzione dinamica dell'URL e del QR Code
+    let currentAppUrl = "https://github.com";
+
+    function generateAppUrl() {
+      const user = document.getElementById('ghUser').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      const repo = document.getElementById('ghRepo').value.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '');
+      
+      const display = document.getElementById('fullUrlDisplay');
+      const qrImg = document.getElementById('qrImage');
+
+      if (user && repo) {
+        currentAppUrl = `https://${user}.github.io/${repo}/`;
+      } else if (user) {
+        currentAppUrl = `https://${user}.github.io/nome-app/`;
+      } else {
+        currentAppUrl = `https://tuo-username.github.io/nome-app/`;
+      }
+
+      display.innerText = currentAppUrl;
+      const qrTarget = (user && repo) ? currentAppUrl : "https://github.com";
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(qrTarget)}`;
+    }
+
+    function copyGeneratedLink() {
+      navigator.clipboard.writeText(currentAppUrl).then(() => {
+        const btnText = document.getElementById('copyLinkFeedback');
+        const prev = btnText.innerText;
+        btnText.innerText = "Copiato negli appunti!";
+        setTimeout(() => {
+          btnText.innerText = prev;
+        }, 2000);
+      });
+    }
+
+    // Modal QR Code per la LIM
+    function openQrModal() {
+      const modal = document.getElementById('qrModal');
+      const modalImg = document.getElementById('qrModalImage');
+      const modalUrl = document.getElementById('modalUrlDisplay');
+      modalImg.src = document.getElementById('qrImage').src;
+      modalUrl.innerText = currentAppUrl;
+      modal.classList.remove('hidden');
+    }
+
+    function closeQrModal() {
+      document.getElementById('qrModal').classList.add('hidden');
+    }
+
+    // Inizializza al caricamento della pagina
+    window.addEventListener('DOMContentLoaded', () => {
+      updateProgress();
+      generateAppUrl();
+    });
+  </script>
+</body>
+</html>
